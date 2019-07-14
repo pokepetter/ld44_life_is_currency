@@ -205,8 +205,7 @@ with open(f, 'r') as f:
 
 player.position = player_start.position
 player.z =-1
-
-Audio('life_is_currency', pitch=1, loop=True)
+music = Audio('life_is_currency', pitch=1, loop=True)
 
 input_handler.bind('space', 'e')
 input_handler.bind('w', 'arrow up')
