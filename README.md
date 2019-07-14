@@ -1,1 +1,1 @@
-![screenshot](textures/compressed/climb.jpg)
+![screenshot](value_of_life_screenshot.jpg)
