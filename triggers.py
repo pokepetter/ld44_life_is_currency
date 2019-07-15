@@ -275,6 +275,8 @@ class Sacrifice(UseTrigger):
 
         self.seq.start()
 
+        self.disabled = True
+
     # def input(self, key):
     #     super().input(key)
     #     if key == 'escape' and hasattr(self, 'seq'):
