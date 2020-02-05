@@ -84,7 +84,7 @@ class CableCar(Teleporter):
         if len(self.player.followers) < 3 or self.on_cooldown:
             return
 
-        camera.overlay.fade_in(.4)
+        camera.overlay.fade_in(duration=.4)
 
         invoke(setattr, self.player, 'position', self.target.position, delay=.4)
         for f in self.player.followers:
@@ -94,7 +94,7 @@ class CableCar(Teleporter):
         self.target.on_cooldown = True
         invoke(setattr, self.target, 'on_cooldown', False, delay=1)
 
-        camera.overlay.fade_out(.4, delay=.5)
+        camera.overlay.fade_out(duration=.4, delay=.5)
 
 
 class NPC(UseTrigger):
@@ -207,8 +207,8 @@ class ObservatoryDoor(UseTrigger):
         super().__init__()
 
         self.opened_eyes = False
-        self.moon_open = Animation('moon', fps=3, parent=camera.ui, scale=.1, loop=False, enabled=True, autoplay=False)
-        self.moon_loop = Animation('moon_loop', fps=3, parent=camera.ui, scale=.1, loop=True, enabled=True, autoplay=False)
+        self.moon_open = Animation('moon', fps=3, parent=camera.ui, scale=(16/9,1), loop=False, enabled=True, autoplay=False)
+        self.moon_loop = Animation('moon_loop', fps=3, parent=camera.ui, scale=(16/9,1), loop=True, enabled=True, autoplay=False)
 
         for key, value in kwargs.items():
             setattr(self, key ,value)
@@ -217,9 +217,9 @@ class ObservatoryDoor(UseTrigger):
     def use(self):
         # print('use')
         if self.opened_eyes == False:
-            camera.overlay.fade_in(.2)
+            camera.overlay.fade_in(duration=.2)
             invoke(setattr, self.moon_open, 'enabled', True, delay=.2)
-            camera.overlay.fade_out(.5, delay=.4)
+            camera.overlay.fade_out(duration=.5, delay=.4)
             invoke(self.moon_open.play, delay=.4)
             self.disabled = True
             invoke(self.moon_loop.play, delay=2.4)
@@ -230,17 +230,17 @@ class ObservatoryDoor(UseTrigger):
             return
 
         if self.opened_eyes:
-            camera.overlay.fade_in(.2)
+            camera.overlay.fade_in(duration=.2)
             invoke(setattr, self.moon_loop, 'enabled', not self.moon_loop.enabled, delay=.2)
             # self.moon_loop.enabled = not self.moon_loop.enabled
-            camera.overlay.fade_out(.5, delay=.4)
+            camera.overlay.fade_out(duration=.5, delay=.4)
 
 
 class Sacrifice(UseTrigger):
 
     def use(self):
         self.player.speed = 0
-        camera.overlay.fade_in(2, delay=1)
+        camera.overlay.fade_in(duration=2, delay=1)
         lines = '''
             And so their blood were spilled,
             the beings created from him.
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     # NPC(p)
     # TalkativeNPC(p).use()
     # od = ObservatoryDoor()
-    Sacrifice(player=p).use()
+    # Sacrifice(player=p).use()
     # def input(key):
     #     if key == 'space':
     #         od.use()

@@ -11,7 +11,8 @@ window.color = color.black
 window.exit_button.visible = False
 window.fps_counter.visible = False
 window.fullscreen = True
-mouse.visible = False
+# window.show_ursina_splash = True
+# mouse.visible = False
 
 bg = Entity(model='quad', scale_x=window.aspect_ratio, texture='climb')
 bg.scale *= 2.0
@@ -33,8 +34,8 @@ player.walk_animation = Animation('player', parent=player, y=.5, fps=6, double_s
 player_idle = Sprite('player_idle', parent=player, y=.5, double_sided=True)
 player.followers = list()
 player_grid_pos = (0,0)
-# player.speed = .00125 * 1.5
 player.speed = .001875
+
 
 collider = Entity(
     parent=bg,
@@ -87,19 +88,19 @@ def update():
                     pass
 
     # player_movement
-    ray = raycast(player.position, (0,0,1), traverse_target=collider, debug=True)
+    ray = raycast(player.position, (0,0,1), traverse_target=collider)
     if ray.hit:
         player_grid_pos = ray.point
     else:
         player_grid_pos = (0,0)
 
     player_grid_pos = (int(player_grid_pos[0]*collider_size[0]/1.5), int(player_grid_pos[1]*collider_size[1]/1.5))
-    free_above = int(collider.texture.get_pixel(player_grid_pos[0], player_grid_pos[1]+1) != (255,0,0,255))
+    free_above = int(collider.texture.get_pixel(player_grid_pos[0], player_grid_pos[1]+1) != color.red)
 
-    player.x += held_keys['d'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0]+1, player_grid_pos[1]+free_above) != (255,0,0,255))
-    player.x -= held_keys['a'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0]-1, player_grid_pos[1]+free_above) != (255,0,0,255))
+    player.x += held_keys['d'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0]+1, player_grid_pos[1]+free_above) != color.red)
+    player.x -= held_keys['a'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0]-1, player_grid_pos[1]+free_above) != color.red)
     player.y += held_keys['w'] * player.speed * free_above
-    player.y -= held_keys['s'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0], player_grid_pos[1]) != (255,0,0,255))
+    player.y -= held_keys['s'] * player.speed * int(collider.texture.get_pixel(player_grid_pos[0], player_grid_pos[1]) != color.red)
 
     player.moving = bool(held_keys['w'] + held_keys['a'] + held_keys['s'] + held_keys['d'] > 0)
     player.walk_animation.enabled = player.moving and player.speed != 0
@@ -186,6 +187,7 @@ cable_car_0 = CableCar(name='cable_car_0', player=player)
 cable_car_1 = CableCar(name='cable_car_1', player=player)
 cable_car_0.target = cable_car_1
 cable_car_1.target = cable_car_0
+invoke(cable_car_0.use, delay=3)
 
 altar = Altar(name='altar', player=player) # stop npcs
 
@@ -196,10 +198,8 @@ door3.target = door2
 
 sacrifice_trigger = Sacrifice(name='sacrifice_trigger', player=player, disabled=True)
 observatory_door = ObservatoryDoor(name='observatory_door', sacrifice_trigger=sacrifice_trigger, player=player)
-
-
 # import positions
-f = list(application.asset_folder.glob('**/positions.py'))[0]
+f = list(Path('.').glob('**/positions.py'))[0]
 with open(f, 'r') as f:
     exec(f.read())
 
@@ -207,10 +207,10 @@ player.position = player_start.position
 player.z =-1
 music = Audio('life_is_currency', pitch=1, loop=True)
 
-input_handler.bind('space', 'e')
-input_handler.bind('w', 'arrow up')
-input_handler.bind('a', 'arrow left')
-input_handler.bind('s', 'arrow down')
-input_handler.bind('d', 'arrow right')
+input_handler.bind('e', 'space')
+input_handler.bind('up arrow', 'w')
+input_handler.bind('left arrow', 'a')
+input_handler.bind('down arrow', 's')
+input_handler.bind('right arrow', 'd')
 
 app.run()
