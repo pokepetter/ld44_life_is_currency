@@ -187,10 +187,10 @@ class TalkativeNPC(NPC):
 
         self.seq.start()
 
-    # def input(self, key):
-    #     super().input(key)
-    #     if key == 'escape' and hasattr(self, 'seq'):
-    #         self.seq.finish()
+    def input(self, key):
+        super().input(key)
+        if key == 'escape' and hasattr(self, 'seq'):
+            self.seq.finish()
 
 
 class Altar(UseTrigger):
@@ -207,8 +207,8 @@ class ObservatoryDoor(UseTrigger):
         super().__init__()
 
         self.opened_eyes = False
-        self.moon_open = Animation('moon', fps=3, parent=camera.ui, scale=(16/9,1), loop=False, enabled=True, autoplay=False)
-        self.moon_loop = Animation('moon_loop', fps=3, parent=camera.ui, scale=(16/9,1), loop=True, enabled=True, autoplay=False)
+        self.moon_open = Animation('moon', fps=3, parent=camera.ui, scale=(16/9,1), loop=False, enabled=False, autoplay=False)
+        self.moon_loop = Animation('moon_loop', fps=3, parent=camera.ui, scale=(16/9,1), loop=True, enabled=False, autoplay=False)
 
         for key, value in kwargs.items():
             setattr(self, key ,value)
@@ -217,16 +217,18 @@ class ObservatoryDoor(UseTrigger):
     def use(self):
         # print('use')
         if self.opened_eyes == False:
+            print('look at moon')
             camera.overlay.fade_in(duration=.2)
             invoke(setattr, self.moon_open, 'enabled', True, delay=.2)
             camera.overlay.fade_out(duration=.5, delay=.4)
-            invoke(self.moon_open.play, delay=.4)
+            invoke(self.moon_open.start, delay=.4)
             self.disabled = True
-            invoke(self.moon_loop.play, delay=2.4)
+            invoke(self.moon_loop.start, delay=2.4)
             invoke(setattr, self.moon_open, 'enabled', False, delay=2.5)
             invoke(setattr, self, 'disabled', False, delay=2.5)
             self.opened_eyes = True
             self.sacrifice_trigger.disabled = False
+            invoke(print, 'look at moon finished', delay=2.5)
             return
 
         if self.opened_eyes:

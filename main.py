@@ -1,15 +1,15 @@
 from ursina import *
+from math import floor
 # from PIL import Image
 # import psd_tools
 # from psd_tools import PSDImage
-from player import PlayerModel
 
+# application.development_mode = False
 app = Ursina()
 
 window.title = 'Value of Life'
 window.color = color.black
-window.exit_button.visible = False
-window.fps_counter.visible = False
+window.editor_ui.enabled = False
 window.fullscreen = True
 # window.show_ursina_splash = True
 # mouse.visible = False
@@ -23,14 +23,8 @@ fg.texture = 'climb_fg'
 fg.z = -2
 
 
-player = Entity(
-    # model='quad',
-    # origin_y=-.5,
-    scale=(.06, .06),
-    # color=color.orange,
-    # texture='player'
-    )
-player.walk_animation = Animation('player', parent=player, y=.5, fps=6, double_sided=True, enabled=False)
+player = Entity(scale=.06)
+player.walk_animation = Animation('player_walk', parent=player, y=.5, fps=6, double_sided=True, enabled=False)
 player_idle = Sprite('player_idle', parent=player, y=.5, double_sided=True)
 player.followers = list()
 player_grid_pos = (0,0)
@@ -67,25 +61,26 @@ camera.orthographic = True
 camera.add_script(SmoothFollow(target=camera_target, offset=(0,0,-50)))
 
 def update():
-    # collider drawing
-    if collider and collider_size and collider.color != color.clear:
-        if mouse.left and mouse.hovered_entity == collider:
-            grid_position = (
-                int(mouse.point[0] * collider_size[0] / 1.5),
-                int(mouse.point[1] * collider_size[1] / 1.5),
-                )
+    if application.development_mode:
+        # collider drawing
+        if collider and collider_size and collider.color != color.clear:
+            if mouse.left and mouse.hovered_entity == collider:
+                grid_position = (
+                    floor(mouse.point[0] * collider_size[0] / 1.5),
+                    floor(mouse.point[1] * collider_size[1] / 1.5),
+                    )
 
-            if not held_keys['alt']:
-                collider.texture.set_pixel(grid_position[0], grid_position[1], color.red)
-                collider.texture.apply()
-            else:   # erase
-                try:
-                    for y in range(grid_position[1]-1, grid_position[1]+1):
-                        for x in range(grid_position[0]-1, grid_position[0]+1):
-                            collider.texture.set_pixel(x, y, color.black)
+                if not held_keys['alt']:
+                    collider.texture.set_pixel(grid_position[0], grid_position[1], color.red)
                     collider.texture.apply()
-                except:
-                    pass
+                else:   # erase
+                    try:
+                        for y in range(grid_position[1]-1, grid_position[1]+1):
+                            for x in range(grid_position[0]-1, grid_position[0]+1):
+                                collider.texture.set_pixel(x, y, color.black)
+                        collider.texture.apply()
+                    except:
+                        pass
 
     # player_movement
     ray = raycast(player.position, (0,0,1), traverse_target=collider)
@@ -125,6 +120,9 @@ def update():
 
 
 def input(key):
+    if not application.development_mode:
+        return
+
     global target_fov
     global player
 
@@ -212,5 +210,16 @@ input_handler.bind('up arrow', 'w')
 input_handler.bind('left arrow', 'a')
 input_handler.bind('down arrow', 's')
 input_handler.bind('right arrow', 'd')
+
+if application.development_mode:    # add some cheat codes
+    def cheat_input(key):
+        if held_keys['shift'] and key in [str(i) for i in range(5)]:
+            player.position = [npc0, npc1, npc2, altar, observatory_door][int(key)-1].position
+
+        if key == 'o':
+            observatory_door.use()
+
+    Entity(input=cheat_input)
+
 
 app.run()
