@@ -101,7 +101,7 @@ class NPC(UseTrigger):
     def __init__(self, player, **kwargs):
         super().__init__()
         self.player = player
-        self.walk_animation = Animation('player', parent=self, y=.5, fps=6, double_sided=True)
+        self.walk_animation = Animation('player_walk', parent=self, y=.5, fps=6, double_sided=True)
         self.player_idle = Sprite('player_idle', parent=self, y=.5, double_sided=True)
         self.scale = player.scale
         self.following = False

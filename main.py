@@ -14,7 +14,7 @@ window.fullscreen = True
 # window.show_ursina_splash = True
 # mouse.visible = False
 
-bg = Entity(model='quad', scale_x=window.aspect_ratio, texture='climb')
+bg = Entity(model='quad', scale_x=16/9, texture='climb')
 bg.scale *= 2.0
 bg.aspect_ratio = bg.scale_x / bg.scale_y
 
@@ -140,7 +140,7 @@ def input(key):
 
 
         print('trying to save positions:')
-        with open('positions.py', 'w') as f:
+        with open('positions.txt', 'w') as f:
             print('opened')
             for e in [e for e in scene.entities if isinstance(e, Draggable)]:
                 if e in (player, bg, collider, camera_target):
@@ -197,7 +197,7 @@ door3.target = door2
 sacrifice_trigger = Sacrifice(name='sacrifice_trigger', player=player, disabled=True)
 observatory_door = ObservatoryDoor(name='observatory_door', sacrifice_trigger=sacrifice_trigger, player=player)
 # import positions
-f = list(Path('.').glob('**/positions.py'))[0]
+f = list(Path('.').glob('**/positions.txt'))[0]
 with open(f, 'r') as f:
     exec(f.read())
 
