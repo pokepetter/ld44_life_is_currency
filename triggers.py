@@ -29,7 +29,7 @@ class UseTrigger(Draggable):
         if not hasattr(self, 'player') or not self.player or self.disabled:
             return
 
-        self.dot.enabled = distance2d(self.world_position, self.player.world_position) < self.radius
+        self.dot.enabled = distance_2d(self.world_position, self.player.world_position) < self.radius
 
 
     def input(self, key):
